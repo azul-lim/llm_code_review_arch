@@ -25,11 +25,11 @@ diagrams/       # 아키텍처 다이어그램
 | 문서 | 설명 |
 |------|------|
 | [00-problem-analysis.md](docs/00-problem-analysis.md) | 현재 시스템 문제점 분석 |
-| [01-overview.md](docs/01-overview.md) | 개선 시스템 개요 |
-| [02-architecture.md](docs/02-architecture.md) | 전체 아키텍처 설계 |
-| [components/](docs/components/) | 컴포넌트별 상세 설계 |
-| [prompts/](docs/prompts/) | 프롬프트 설계 |
-| [improvements/](docs/improvements/) | 개선 제안 |
+| [03-current-environment.md](docs/03-current-environment.md) | 환경 제약 조건 |
+| [04-task-workflow-design.md](docs/04-task-workflow-design.md) | **★ Task/Workflow 설계 (핵심)** |
+| [components/](docs/components/) | 참조용 컴포넌트 (P1, P2) |
+| [prompts/](docs/prompts/) | 프롬프트 전략 |
+| [improvements/](docs/improvements/) | 개선 전략 (듀얼 모델, COT) |
 
 ## 활용 방법
 

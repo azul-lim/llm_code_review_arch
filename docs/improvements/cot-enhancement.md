@@ -452,5 +452,5 @@ cot:
 ## 10. 관련 문서
 
 - 프롬프트 전략: [prompt-strategy.md](../prompts/prompt-strategy.md)
-- Code Reviewer: [components/03-code-reviewer.md](../components/03-code-reviewer.md)
+- Task/Workflow 설계: [04-task-workflow-design.md](../04-task-workflow-design.md)
 - 호출 최적화: [call-optimization.md](call-optimization.md)

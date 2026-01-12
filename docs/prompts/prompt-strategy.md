@@ -130,9 +130,11 @@ Step 3: 문제점 탐색
 
 ---
 
-## 4. 컴포넌트별 프롬프트 전략
+## 4. Task별 프롬프트 전략
 
-### 4.1 Description Refiner
+> Task 상세 정의는 [04-task-workflow-design.md](../04-task-workflow-design.md) 참조
+
+### 4.1 P1: PR Description Refinement
 
 **목표**: 자유 형식 → 구조화
 
@@ -147,9 +149,9 @@ Step 3: 문제점 탐색
 - 추론 표시 명확 (예: "추정됨", "명시적으로 언급됨")
 ```
 
-### 4.2 Change Matcher
+### 4.2 F1: Intent Matching + Interpretation
 
-**목표**: 명세 ↔ 변경 연결
+**목표**: PR Description ↔ 파일 변경점 매칭 및 해석
 
 ```
 전략:
@@ -162,22 +164,23 @@ Step 3: 문제점 탐색
 - 불확실성 수치화
 ```
 
-### 4.3 Code Reviewer
+### 4.3 F3: Logic Bug Detection ★ 핵심 ★
 
-**목표**: 버그/문제 탐지 및 해결안 제시
+**목표**: 로직 버그, 메모리, 동시성 문제 탐지
 
 ```
 전략:
 - COT 필수
 - 시뮬레이션 기반
 - 실행 가능한 제안
+- FW 특화 체크리스트 적용
 
 톤:
 - 전문적, 구체적
 - 비판적이되 건설적
 ```
 
-### 4.4 Summary Generator
+### 4.4 P2: PR Summary Generation
 
 **목표**: 전체 종합 및 행동 제안
 
