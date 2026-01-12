@@ -23,25 +23,19 @@ llm_code_review_arch/
 │
 ├── docs/                          # 설계 문서
 │   ├── 00-problem-analysis.md     # 현재 시스템 문제점 분석
-│   ├── 01-overview.md             # 개선 시스템 개요
-│   ├── 02-architecture.md         # 전체 아키텍처 설계
-│   ├── 03-current-environment.md  # 현재 환경 제약
+│   ├── 03-current-environment.md  # 환경 제약 조건
 │   ├── 04-task-workflow-design.md # ★ Task/Workflow 설계 (핵심) ★
 │   │
-│   ├── components/                # 컴포넌트별 상세 설계 (기존)
-│   │   ├── 01-description-refiner.md
-│   │   ├── 02-change-matcher.md
-│   │   ├── 03-code-reviewer.md
-│   │   ├── 04-summary-generator.md
-│   │   └── 05-review-validator.md
+│   ├── components/                # 참조용 (P1, P2 매핑)
+│   │   ├── 01-description-refiner.md  # → P1
+│   │   └── 04-summary-generator.md    # → P2
 │   │
 │   ├── prompts/                   # 프롬프트 설계
-│   │   ├── prompt-strategy.md
-│   │   └── templates/
+│   │   └── prompt-strategy.md
 │   │
-│   └── improvements/              # 개선 제안
-│       ├── call-optimization.md
-│       └── cot-enhancement.md
+│   └── improvements/              # 개선 전략
+│       ├── call-optimization.md   # 듀얼 모델 병렬 처리
+│       └── cot-enhancement.md     # COT 개선 (F3 적용)
 │
 ├── references/                    # 외부 시스템 분석
 │   └── external-systems/
@@ -53,34 +47,24 @@ llm_code_review_arch/
 │       ├── 05-comparison.md
 │       └── 06-lessons-learned.md
 │
-├── schemas/                       # JSON Schema 정의
+├── schemas/                       # JSON Schema (업데이트 필요)
 │   ├── input/
 │   ├── internal/
 │   └── output/
 │
 ├── examples/                      # 예시 데이터
-│   ├── input/
-│   ├── output/
-│   └── prompt-examples/
 │
-└── diagrams/                      # 아키텍처 다이어그램
-    ├── current-flow.md
-    └── proposed-flow.md
+└── diagrams/                      # 다이어그램
+    └── current-flow.md            # 현재 시스템 흐름
 ```
 
 ## 문서 읽는 순서
 
-### 신규 설계 이해 (권장)
 1. `docs/00-problem-analysis.md` - 현재 시스템의 문제점 이해
 2. `docs/03-current-environment.md` - 환경 제약 조건 파악
 3. **`docs/04-task-workflow-design.md` - ★ Task/Workflow 설계 (핵심) ★**
-4. `references/external-systems/05-comparison.md` - 외부 시스템 비교 참조
-5. `schemas/` - 데이터 인터페이스 확인
-
-### 기존 설계 참조 (필요시)
-- `docs/01-overview.md` - 기존 개선 방향
-- `docs/02-architecture.md` - 기존 전체 구조
-- `docs/components/` - 기존 컴포넌트별 상세 설계
+4. `docs/improvements/call-optimization.md` - 듀얼 모델 병렬 처리 전략
+5. `references/external-systems/05-comparison.md` - 외부 시스템 비교 참조
 
 ## 시스템 개요
 
@@ -134,9 +118,9 @@ GPT-OSS (속도 우선) ┘
 
 ## 설계 원칙
 
-1. **명확한 역할 분리**: 각 컴포넌트는 단일 책임 원칙 준수
+1. **명확한 역할 분리**: 각 Task는 단일 책임 원칙 준수
 2. **구조화된 I/O**: JSON Schema로 명확한 인터페이스 정의
-3. **단계적 추론**: COT를 명시적으로 구조화
+3. **단계적 추론**: F3에서 COT 명시적 구조화
 4. **예시 기반 설명**: 모든 설계에 구체적 예시 포함
 
 ## AI 구현 가이드
@@ -166,9 +150,9 @@ Phase 3: 고급 기능
 
 1. **`docs/04-task-workflow-design.md` 숙지** - Task 정의 및 Workflow
 2. **기존 코드 분석** - 현재 프롬프트 및 JSON 구조 확인
-3. **스키마 정의** - `schemas/`에 각 Task I/O 스키마
-4. **프롬프트 작성** - `docs/prompts/templates/`에 Task별 템플릿
-5. **테스트** - `examples/`로 동작 검증
+3. **스키마 정의** - `schemas/`에 각 Task I/O 스키마 (신규 정의 필요)
+4. **프롬프트 작성** - Task별 프롬프트 템플릿
+5. **테스트** - 실제 PR 데이터로 동작 검증
 
 ### 주의사항
 
