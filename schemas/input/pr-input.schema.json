@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr-input.schema.json",
+  "title": "PR Input",
+  "description": "코드 리뷰 파이프라인의 입력 데이터",
+  "type": "object",
+  "properties": {
+    "pr_id": {
+      "type": "string",
+      "description": "PR 고유 식별자"
+    },
+    "pr_description": {
+      "type": "string",
+      "description": "PR Description 원본 텍스트"
+    },
+    "files": {
+      "type": "array",
+      "description": "변경된 파일 목록",
+      "items": {
+        "$ref": "#/$defs/FileInfo"
+      }
+    },
+    "pr_full_diff": {
+      "type": "string",
+      "description": "PR 전체 diff (선택적)"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "추가 메타데이터",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "required": ["pr_id", "pr_description", "files"],
+  "$defs": {
+    "FileInfo": {
+      "type": "object",
+      "properties": {
+        "file_name": {
+          "type": "string",
+          "description": "파일 경로 및 이름"
+        },
+        "file_diff": {
+          "$ref": "#/$defs/FileDiff"
+        },
+        "function_code": {
+          "type": "string",
+          "description": "변경점 포함 함수의 전체 코드"
+        },
+        "file_type": {
+          "type": "string",
+          "enum": ["source", "header", "config", "test", "other"],
+          "description": "파일 유형"
+        }
+      },
+      "required": ["file_name", "file_diff"]
+    },
+    "FileDiff": {
+      "type": "object",
+      "properties": {
+        "hunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiffHunk"
+          }
+        },
+        "additions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deletions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw_diff": {
+          "type": "string",
+          "description": "원본 unified diff 텍스트"
+        }
+      },
+      "required": ["hunks", "additions", "deletions"]
+    },
+    "DiffHunk": {
+      "type": "object",
+      "properties": {
+        "old_start": {
+          "type": "integer"
+        },
+        "old_lines": {
+          "type": "integer"
+        },
+        "new_start": {
+          "type": "integer"
+        },
+        "new_lines": {
+          "type": "integer"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": ["old_start", "old_lines", "new_start", "new_lines", "content"]
+    }
+  }
+}

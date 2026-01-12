@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review-result.schema.json",
+  "title": "Review Result",
+  "description": "Code Reviewer의 출력 - 파일별 리뷰 결과",
+  "type": "object",
+  "properties": {
+    "file_name": {
+      "type": "string",
+      "description": "리뷰된 파일명"
+    },
+    "interpretation": {
+      "$ref": "#/$defs/ChangeInterpretation",
+      "description": "변경점 해석"
+    },
+    "issues": {
+      "type": "array",
+      "description": "발견된 이슈 목록",
+      "items": {
+        "$ref": "#/$defs/Issue"
+      }
+    },
+    "reasoning_trace": {
+      "$ref": "#/$defs/ReasoningTrace",
+      "description": "COT 추론 과정"
+    }
+  },
+  "required": ["file_name", "interpretation", "issues", "reasoning_trace"],
+  "$defs": {
+    "ChangeInterpretation": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "변경 요약"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "변경 목적"
+        },
+        "impact": {
+          "type": "string",
+          "description": "영향 범위"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InterpretationDetail"
+          }
+        }
+      },
+      "required": ["summary", "purpose"]
+    },
+    "InterpretationDetail": {
+      "type": "object",
+      "properties": {
+        "line_range": {
+          "type": "string",
+          "description": "라인 범위 (예: '142-145')"
+        },
+        "description": {
+          "type": "string"
+        },
+        "before_behavior": {
+          "type": "string"
+        },
+        "after_behavior": {
+          "type": "string"
+        }
+      },
+      "required": ["line_range", "description"]
+    },
+    "Issue": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ISS-[0-9]{3}$",
+          "description": "이슈 ID (예: ISS-001)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "bug",
+            "logic_error",
+            "null_safety",
+            "memory",
+            "concurrency",
+            "performance",
+            "security",
+            "error_handling",
+            "style",
+            "structure"
+          ],
+          "description": "이슈 유형"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "info"],
+          "description": "심각도"
+        },
+        "line_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "description": "간결한 제목"
+        },
+        "description": {
+          "type": "string",
+          "description": "상세 설명"
+        },
+        "code_snippet": {
+          "type": "string",
+          "description": "문제 코드 스니펫"
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "개선 방향"
+        },
+        "suggested_code": {
+          "type": "string",
+          "description": "개선 코드"
+        },
+        "related_spec": {
+          "type": "string",
+          "description": "관련 명세 ID"
+        }
+      },
+      "required": ["id", "type", "severity", "line_start", "line_end", "title", "description"]
+    },
+    "ReasoningTrace": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReasoningStep"
+          }
+        },
+        "conclusion": {
+          "type": "string",
+          "description": "최종 결론"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "분석 신뢰도"
+        }
+      },
+      "required": ["steps", "conclusion"]
+    },
+    "ReasoningStep": {
+      "type": "object",
+      "properties": {
+        "step_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "step_name": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "description": "수행한 분석 행동"
+        },
+        "observation": {
+          "type": "string",
+          "description": "관찰된 사실"
+        },
+        "inference": {
+          "type": "string",
+          "description": "추론 결과"
+        },
+        "issues_found": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "이 단계에서 발견된 문제"
+        }
+      },
+      "required": ["step_number", "action", "observation", "inference"]
+    }
+  }
+}

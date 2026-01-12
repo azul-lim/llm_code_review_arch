@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "refined-spec.schema.json",
+  "title": "Refined Spec",
+  "description": "Description Refiner의 출력 - 구조화된 변경 명세",
+  "type": "object",
+  "properties": {
+    "changes": {
+      "type": "array",
+      "description": "추출된 변경 항목 목록",
+      "items": {
+        "$ref": "#/$defs/ChangeItem"
+      }
+    },
+    "context": {
+      "type": "string",
+      "description": "전체 변경의 맥락 요약"
+    },
+    "raw_description": {
+      "type": "string",
+      "description": "원본 PR Description"
+    }
+  },
+  "required": ["changes", "context", "raw_description"],
+  "$defs": {
+    "ChangeItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CHG-[0-9]{3}$",
+          "description": "변경 항목 고유 ID (예: CHG-001)"
+        },
+        "description": {
+          "type": "string",
+          "description": "변경 내용 설명"
+        },
+        "expected_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "예상 관련 파일 목록"
+        },
+        "change_type": {
+          "type": "string",
+          "enum": ["add", "modify", "delete", "fix", "refactor"],
+          "description": "변경 유형"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "검색용 핵심 키워드"
+        }
+      },
+      "required": ["id", "description", "change_type"]
+    }
+  }
+}

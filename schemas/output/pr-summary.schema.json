@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pr-summary.schema.json",
+  "title": "PR Summary",
+  "description": "Summary Generator의 출력 - PR 전체 요약",
+  "type": "object",
+  "properties": {
+    "overall_assessment": {
+      "$ref": "#/$defs/OverallAssessment"
+    },
+    "spec_coverage": {
+      "$ref": "#/$defs/SpecCoverage"
+    },
+    "key_issues": {
+      "type": "array",
+      "description": "핵심 이슈 목록 (최대 5개)",
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/KeyIssue"
+      }
+    },
+    "file_summaries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FileSummary"
+      }
+    },
+    "statistics": {
+      "$ref": "#/$defs/ReviewStatistics"
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "권장 사항 목록",
+      "items": {
+        "$ref": "#/$defs/Recommendation"
+      }
+    }
+  },
+  "required": ["overall_assessment", "spec_coverage", "key_issues", "statistics", "recommendations"],
+  "$defs": {
+    "OverallAssessment": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["approve", "request_changes", "needs_discussion"],
+          "description": "평가 상태"
+        },
+        "summary": {
+          "type": "string",
+          "description": "1-2문장 요약"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "리스크 수준"
+        },
+        "approval_suggestion": {
+          "type": "string",
+          "description": "승인 관련 제안"
+        }
+      },
+      "required": ["status", "summary", "risk_level"]
+    },
+    "SpecCoverage": {
+      "type": "object",
+      "properties": {
+        "total_specs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched_specs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "partially_matched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmatched_specs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/UnmatchedSpec"
+          }
+        }
+      },
+      "required": ["total_specs", "matched_specs", "partially_matched"]
+    },
+    "UnmatchedSpec": {
+      "type": "object",
+      "properties": {
+        "spec_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "possible_reason": {
+          "type": "string"
+        }
+      },
+      "required": ["spec_id", "description"]
+    },
+    "KeyIssue": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "info"]
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "priority_score": {
+          "type": "number",
+          "description": "우선순위 점수"
+        }
+      },
+      "required": ["id", "severity", "file_name", "title"]
+    },
+    "FileSummary": {
+      "type": "object",
+      "properties": {
+        "file_name": {
+          "type": "string"
+        },
+        "change_summary": {
+          "type": "string"
+        },
+        "issue_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "highest_severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "info", "none"]
+        }
+      },
+      "required": ["file_name", "change_summary", "issue_count"]
+    },
+    "ReviewStatistics": {
+      "type": "object",
+      "properties": {
+        "total_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_with_issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues_by_severity": {
+          "type": "object",
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "major": { "type": "integer", "minimum": 0 },
+            "minor": { "type": "integer", "minimum": 0 },
+            "info": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "issues_by_type": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": ["total_files", "files_with_issues", "total_issues"]
+    },
+    "Recommendation": {
+      "type": "object",
+      "properties": {
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "우선순위 (1이 가장 높음)"
+        },
+        "action": {
+          "type": "string",
+          "description": "수행해야 할 행동"
+        },
+        "reason": {
+          "type": "string",
+          "description": "이유"
+        },
+        "related_issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "관련 이슈 ID"
+        }
+      },
+      "required": ["priority", "action", "reason"]
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "pr_id": "PR-1234",
+  "pr_description": "Fix memory leak in buffer management\n\nChanges:\n- Added null check before freeing buffer in nand_read()\n- Modified buffer allocation logic to track reference count\n- Fixed double-free bug in error handling path\n\nAlso updated comments for clarity.",
+  "files": [
+    {
+      "file_name": "drivers/nand/nand_read.c",
+      "file_diff": {
+        "hunks": [
+          {
+            "old_start": 140,
+            "old_lines": 8,
+            "new_start": 140,
+            "new_lines": 10,
+            "content": "@@ -140,8 +140,10 @@ int nand_read(struct nand_device *dev, uint8_t *buffer, size_t size)\n     // Read data from NAND\n     status = nand_read_page(dev, buffer, size);\n \n-    free(buffer);\n+    if (buffer != NULL) {\n+        free(buffer);\n+    }\n \n     return status;\n }"
+          }
+        ],
+        "additions": 3,
+        "deletions": 1,
+        "raw_diff": "diff --git a/drivers/nand/nand_read.c b/drivers/nand/nand_read.c\nindex 1234567..abcdefg 100644\n--- a/drivers/nand/nand_read.c\n+++ b/drivers/nand/nand_read.c\n@@ -140,8 +140,10 @@ int nand_read(struct nand_device *dev, uint8_t *buffer, size_t size)\n     // Read data from NAND\n     status = nand_read_page(dev, buffer, size);\n \n-    free(buffer);\n+    if (buffer != NULL) {\n+        free(buffer);\n+    }\n \n     return status;\n }"
+      },
+      "function_code": "int nand_read(struct nand_device *dev, uint8_t *buffer, size_t size)\n{\n    int status;\n    \n    if (dev == NULL) {\n        return -EINVAL;\n    }\n    \n    if (buffer == NULL) {\n        buffer = malloc(size);\n        if (buffer == NULL) {\n            return -ENOMEM;\n        }\n    }\n    \n    // Read data from NAND\n    status = nand_read_page(dev, buffer, size);\n    \n    if (buffer != NULL) {\n        free(buffer);\n    }\n    \n    return status;\n}",
+      "file_type": "source"
+    },
+    {
+      "file_name": "drivers/nand/buffer.c",
+      "file_diff": {
+        "hunks": [
+          {
+            "old_start": 55,
+            "old_lines": 5,
+            "new_start": 55,
+            "new_lines": 12,
+            "content": "@@ -55,5 +55,12 @@ struct buffer_pool *buffer_alloc(size_t size)\n     pool->size = size;\n     pool->data = malloc(size);\n+    pool->ref_count = 1;\n+    return pool;\n+}\n+\n+void buffer_addref(struct buffer_pool *pool)\n+{\n+    if (pool != NULL) {\n+        pool->ref_count++;\n+    }\n }"
+          }
+        ],
+        "additions": 9,
+        "deletions": 0,
+        "raw_diff": "..."
+      },
+      "function_code": "struct buffer_pool *buffer_alloc(size_t size)\n{\n    struct buffer_pool *pool = malloc(sizeof(struct buffer_pool));\n    if (pool == NULL) {\n        return NULL;\n    }\n    pool->size = size;\n    pool->data = malloc(size);\n    pool->ref_count = 1;\n    return pool;\n}\n\nvoid buffer_addref(struct buffer_pool *pool)\n{\n    if (pool != NULL) {\n        pool->ref_count++;\n    }\n}",
+      "file_type": "source"
+    }
+  ],
+  "pr_full_diff": "...(전체 diff)...",
+  "metadata": {
+    "author": "developer@example.com",
+    "branch": "fix/memory-leak",
+    "created_at": "2024-01-15T10:30:00Z"
+  }
+}

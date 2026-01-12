@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "validated-review.schema.json",
+  "title": "Validated Review Result",
+  "description": "Review Validator의 출력 - 검증된 리뷰 결과",
+  "type": "object",
+  "properties": {
+    "file_name": {
+      "type": "string",
+      "description": "검증된 파일명"
+    },
+    "validated_issues": {
+      "type": "array",
+      "description": "검증 통과한 이슈 목록",
+      "items": {
+        "$ref": "#/$defs/ValidatedIssue"
+      }
+    },
+    "filtered_issues": {
+      "type": "array",
+      "description": "필터링된 이슈 목록 (사유 포함)",
+      "items": {
+        "$ref": "#/$defs/FilteredIssue"
+      }
+    },
+    "validation_summary": {
+      "$ref": "#/$defs/ValidationSummary"
+    }
+  },
+  "required": ["file_name", "validated_issues", "filtered_issues", "validation_summary"],
+  "$defs": {
+    "ValidatedIssue": {
+      "type": "object",
+      "properties": {
+        "original_issue": {
+          "description": "원본 Issue 객체",
+          "type": "object"
+        },
+        "validation": {
+          "$ref": "#/$defs/IssueValidation"
+        },
+        "inline_position": {
+          "$ref": "#/$defs/InlinePosition"
+        }
+      },
+      "required": ["original_issue", "validation", "inline_position"]
+    },
+    "IssueValidation": {
+      "type": "object",
+      "properties": {
+        "is_valid": {
+          "type": "boolean",
+          "description": "검증 통과 여부"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ValidationCheck"
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "검증 신뢰도"
+        }
+      },
+      "required": ["is_valid", "checks"]
+    },
+    "ValidationCheck": {
+      "type": "object",
+      "properties": {
+        "check_type": {
+          "type": "string",
+          "enum": [
+            "change_exists",
+            "description_accurate",
+            "suggestion_valid",
+            "encoding_ok",
+            "not_hallucination",
+            "line_range_valid"
+          ],
+          "description": "검증 유형"
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "통과 여부"
+        },
+        "reason": {
+          "type": "string",
+          "description": "판단 근거"
+        }
+      },
+      "required": ["check_type", "passed", "reason"]
+    },
+    "InlinePosition": {
+      "type": "object",
+      "description": "inline comment를 위한 라인 위치 정보",
+      "properties": {
+        "diff_line_start": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "diff에서의 시작 라인"
+        },
+        "diff_line_end": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "diff에서의 끝 라인"
+        },
+        "file_line_start": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "파일에서의 시작 라인"
+        },
+        "file_line_end": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "파일에서의 끝 라인"
+        },
+        "position_type": {
+          "type": "string",
+          "enum": ["added", "modified", "context"],
+          "description": "변경 유형"
+        },
+        "position_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "위치 추출 신뢰도"
+        }
+      },
+      "required": ["diff_line_start", "diff_line_end", "file_line_start", "file_line_end", "position_type"]
+    },
+    "FilteredIssue": {
+      "type": "object",
+      "properties": {
+        "original_issue": {
+          "type": "object",
+          "description": "원본 Issue 객체"
+        },
+        "filter_reason": {
+          "type": "string",
+          "description": "필터링 사유"
+        },
+        "failed_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "실패한 검증 유형 목록"
+        }
+      },
+      "required": ["original_issue", "filter_reason", "failed_checks"]
+    },
+    "ValidationSummary": {
+      "type": "object",
+      "properties": {
+        "total_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "전체 이슈 수"
+        },
+        "valid_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "유효한 이슈 수"
+        },
+        "filtered_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "필터링된 이슈 수"
+        },
+        "filter_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "필터링 비율"
+        },
+        "common_filter_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "주요 필터링 사유"
+        }
+      },
+      "required": ["total_issues", "valid_issues", "filtered_issues"]
+    }
+  }
+}
